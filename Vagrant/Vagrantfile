@@ -1,0 +1,41 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+#Check if you have the good Vagrant version to use docker provider...
+Vagrant.require_version ">= 1.6.0"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    ENV['VAGRANT_DEFAULT_PROVIDER'] = 'docker'
+    config.ssh.username = "root"
+    config.ssh.password = "vagrant"
+# Links the folder '~/bachelor' on local machine to '/root/bachelor' in container
+    config.vm.synced_folder "~/bachelor/", "/root/bachelor/"
+    config.vm.synced_folder "~/.terminfo/", "/root/.terminfo/"
+# Building Arch container
+    config.vm.define "arch_ansible" do |a|
+        a.vm.provider "docker" do |d|
+            d.build_dir = "./Arch/"
+            d.name = "arch_ansible"
+            d.env = {
+                "ANSIBLE_VAULT_PASSWORD_FILE":"~/bachelor/.vaultsecret"
+            }
+            d.cmd = ["/usr/sbin/sshd", "-D"]
+            d.has_ssh = true
+            d.remains_running = true
+        end
+    end
+# Building Ubuntu container
+    config.vm.define "ubuntu_16_04_ansible" do |a|
+        a.vm.provider "docker" do |d|
+            d.build_dir = "./Ubuntu-16.04/"
+            d.name = "ubuntu_16_04_ansible"
+            d.env = {
+                "ANSIBLE_VAULT_PASSWORD_FILE":"~/bachelor/.vaultsecret"
+            }
+            d.cmd = ["/usr/sbin/sshd", "-D"]
+            d.has_ssh = true
+            d.remains_running = true
+        end
+    end
+end
