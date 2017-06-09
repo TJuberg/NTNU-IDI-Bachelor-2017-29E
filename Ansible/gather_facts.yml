@@ -1,0 +1,29 @@
+- name: Identify network operating system using SNMP
+  hosts: snmp
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: SNMP Call
+      snmp_facts:
+        host: "{{ host }}"
+        version: v2c
+        community: public
+      register: snmpfacts_out
+
+    - name: OS Parsing
+      parse_snmp_sysdescr:
+        sysdescr: "{{ snmpfacts_out.ansible_facts.ansible_sysdescr }}"
+      register: version_out
+
+    - name: Gather iosxr facts
+      iosxr_facts:
+        provider: "{{ ansible_provider }}"
+        gather_subset: "hardware"
+      when: "version_out.ansible_facts.ansible_os_type == 'ios_xr'"
+
+    - name: Gather Junos facts
+      junos_facts:
+        gather_subset: '!config,!routes,!bgppeers'
+        provider: "{{ ansible_provider }}"
+      when: "version_out.ansible_facts.ansible_os_type == 'junos'"

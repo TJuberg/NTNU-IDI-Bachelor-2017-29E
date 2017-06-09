@@ -1,0 +1,21 @@
+---
+
+- name: Junos BGP RPC
+  hosts: ro-test
+  gather_facts: no
+  connection: local
+  tasks:
+
+    - name: JunOS ISIS RPC Call
+      junos_rpc:
+        output: xml
+        provider: "{{ ansible_provider }}"
+        rpc: get-isis-overview-information
+      register: rpc
+
+    - name: JunOS ISIS RPC Write
+      copy:
+        content: "{{ rpc['xml'] | replace('\\n','\n') }}"
+        dest: "out/{{ inventory_hostname }}_rpc_isis_overview.xml"
+
+# vim:ft=ansible:

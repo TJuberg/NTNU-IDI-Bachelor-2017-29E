@@ -1,0 +1,22 @@
+---
+
+- name: Junos Route Engine RPC
+  hosts: ro-test
+  gather_facts: no
+  connection: local
+  tasks:
+
+    - name: Junos Route Engine RPC Call
+      junos_rpc:
+        output: xml
+        provider: "{{ ansible_provider }}"
+        rpc: get-route-engine-information
+      register: rpc
+
+    - name: Junos Route Engine RPC Write
+      copy:
+        content: "{{ rpc['xml'] | replace('\\n','\n') }}"
+        dest: "out/{{ inventory_hostname }}_rpc_route_engine.xml"
+
+
+# vim:ft=ansible:

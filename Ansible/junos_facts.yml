@@ -1,0 +1,22 @@
+---
+
+- name: Get JunOS facts
+  hosts: trd-gw
+  gather_facts: no
+  connection: local
+  tasks:
+
+    - name: Gather Junos facts
+      junos_facts:
+        gather_subset: 'interfaces_ext'
+        #gather_subset: '!config'
+        provider: "{{ ansible_provider }}"
+      register: junos
+
+    - name: Write facts to file
+      copy:
+        #content: "{{ junos }}"
+        content: "{{ junos | to_nice_yaml }}"
+        dest: "out/{{ inventory_hostname }}_facts.yml"
+
+# vim:ft=ansible:

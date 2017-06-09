@@ -1,0 +1,19 @@
+#include_vars:
+  #  file: vault
+  #  name: vault
+
+snmp_community: public
+
+ansible_provider:
+  username: "{{ ansible_username }}"
+  password: "{{ ansible_password }}"
+  timeout: 720
+  host: "{{ host }}"
+  port: 22
+
+ansible_username: ansible
+ansible_password: "{{ vault.ansible_password }}"
+
+
+
+# vim:ft=ansible:

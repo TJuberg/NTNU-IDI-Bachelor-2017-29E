@@ -1,0 +1,20 @@
+---
+
+- name: JunOS Optics RPC
+  hosts: ro-test
+  gather_facts: no
+  connection: local
+  tasks:
+
+    - junos_rpc:
+        output: xml
+        provider: "{{ ansible_provider }}"
+        rpc: get-ldp-database-information
+      register: rpc
+
+    - copy:
+        content: "{{ rpc | replace('\\n','\n') }}"
+        dest: "out/{{ inventory_hostname }}_rpc_ldp.xml"
+
+
+# vim:ft=ansible:

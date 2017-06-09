@@ -1,0 +1,13 @@
+---
+
+- name: Get iosXR facts
+  hosts: fwbuilder-gw1
+  connection: local
+  tasks:
+
+    - name: gather facts
+      ios_facts:
+        provider: "{{ router_provider }}"
+        gather_subset: "interfaces"
+      register: iosxr
+#    - copy: content="{{ iosxr | to_nice_json }}" dest="out/{{ inventory_hostname }}_facts.json"

@@ -1,0 +1,19 @@
+---
+
+- name: Get iosXR facts
+  hosts: snmp
+  connection: local
+  gather_facts: no
+  tasks:
+
+    - name: gather facts
+      iosxr_facts:
+        provider: "{{ ansible_provider }}"
+        gather_subset: "l2vpn"
+        timeout: 20
+      register: iosxr
+      when: "os == 'iosxr'"
+
+    - copy: content="{{ iosxr | to_nice_json }}" dest="out/{{ inventory_hostname }}_facts.json"
+      when: "os == 'iosxr'"
+
