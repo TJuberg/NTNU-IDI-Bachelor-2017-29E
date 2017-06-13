@@ -134,7 +134,7 @@ class FactsBase(object):
         obj = {}
         for item in subset:
             if not item.getchildren() and item.tag != ignore_tag:
-                obj[item.tag] = self.get_text(item)
+                obj[item.tag] = self.clean_text(item.text)
         return obj
 
     def iterate_xml_subset_recursive(self, subset, tag, ignore_tag='name', recurse=False):
@@ -815,7 +815,7 @@ def main():
     """ Main entry point for AnsibleModule
     """
     argument_spec = dict(
-        gather_subset=dict(default=['!config', '!routes', '!bgppeers'], type='list'),
+            gather_subset=dict(default=['!config', '!routes', '!bgp_peers'], type='list'),
         config_format=dict(default='text', choices=['xml', 'text', 'set', 'json']),
     )
 
